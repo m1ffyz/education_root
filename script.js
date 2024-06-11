@@ -1,50 +1,65 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const areaInput = document.getElementById("areaInput");
-    const drawButton = document.getElementById("drawButton");
-    const lengthDisplay = document.getElementById("lengthDisplay");
-    const gridCanvas = document.getElementById("gridCanvas");
-    const ctx = gridCanvas.getContext("2d");
+document.getElementById('sideLength').addEventListener('input', function() {
+    const sideLength = parseFloat(this.value);
+    const areaElement = document.getElementById('area');
+    const differenceElement = document.getElementById('difference');
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const gridSize = 5; // 5cm x 5cm grid
+    const pixelPerCm = canvas.width / gridSize; // Pixels per cm in the canvas
 
-    const drawGrid = () => {
-        const size = 25; // 方眼のサイズ（25ピクセルを1cmとする）
-        const width = gridCanvas.width;
-        const height = gridCanvas.height;
-        ctx.clearRect(0, 0, width, height);
-        ctx.strokeStyle = "#ddd";
-        
-        for (let x = 0; x <= width; x += size) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
+    function roundTo16(num) {
+        return Math.round(num * 1e16) / 1e16;
+    }
+
+    // 計算
+    if (!isNaN(sideLength) && sideLength >= 0) {
+        const area = roundTo16(sideLength * sideLength);
+        const difference = Math.abs(roundTo16(area - 5));
+
+        areaElement.textContent = area.toFixed(16);
+        differenceElement.textContent = difference.toFixed(16);
+
+        // グリッドの描画
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#ddd';
+        for (let i = 0; i <= gridSize; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * pixelPerCm, 0);
+            ctx.lineTo(i * pixelPerCm, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, i * pixelPerCm);
+            ctx.lineTo(canvas.width, i * pixelPerCm);
+            ctx.stroke();
         }
 
-        for (let y = 0; y <= height; y += size) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(width, y);
-        }
-
-        ctx.stroke();
-    };
-
-    const drawSquare = (sideLength) => {
-        ctx.strokeStyle = "#000";
-        const size = sideLength * 25; // 1cmあたり25ピクセルでスケーリング
-        ctx.strokeRect(0, 0, size, size);
-    };
-
-    drawButton.addEventListener("click", () => {
-        const area = parseFloat(areaInput.value);
-        if (isNaN(area) || area <= 0) {
-            alert("正しい面積を入力してください。");
-            return;
-        }
-
-        const sideLength = Math.sqrt(area);
-        lengthDisplay.textContent = `1辺の長さ: ${sideLength.toFixed(15)} cm`;
-
-        ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-        drawGrid();
-        drawSquare(sideLength);
-    });
-
-    drawGrid();
+        // 黒色の正方形を描画（枠線のみ）
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        const squareSize = sideLength * pixelPerCm;
+        ctx.strokeRect(0, 0, squareSize, squareSize);
+    } else {
+        areaElement.textContent = '';
+        differenceElement.textContent = '';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 });
+
+// 初期化
+const canvas = document.getElementById('grid');
+canvas.width = 500;
+canvas.height = 500;
+const ctx = canvas.getContext('2d');
+const gridSize = 5;
+const pixelPerCm = canvas.width / gridSize;
+ctx.strokeStyle = '#ddd';
+for (let i = 0; i <= gridSize; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * pixelPerCm, 0);
+    ctx.lineTo(i * pixelPerCm, canvas.height);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, i * pixelPerCm);
+    ctx.lineTo(canvas.width, i * pixelPerCm);
+    ctx.stroke();
+}
