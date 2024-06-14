@@ -16,8 +16,8 @@ document.getElementById('sideLength').addEventListener('input', function() {
         const area = roundTo16(sideLength * sideLength);
         const difference = Math.abs(roundTo16(area - 5));
 
-        areaElement.textContent = area.toFixed(10);
-        differenceElement.textContent = difference.toFixed(10);
+        areaElement.textContent = area.toFixed(14);
+        differenceElement.textContent = difference.toFixed(14);
 
         // グリッドの描画
         ctx.clearRect(0, 0, canvas.width, canvas.height);
