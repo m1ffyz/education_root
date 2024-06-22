@@ -33,7 +33,7 @@ input[type="number"] {
     position: relative;
     width: 100%;
     height: auto;
-    max-width: 500px; /* 5cm in pixels at standard screen resolution */
+    max-width: 500px;
     margin-top: 20px;
 }
 
